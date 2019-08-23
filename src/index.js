@@ -1,37 +1,31 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import ShowingList from './components/ShowingList';
 import BookingForm from './components/BookingForm';
-import Container from '@material-ui/core/Container';
+import Title from './components/Title';
+import AppGrid from './components/AppGrid';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import rootReducer from './reducers';
+
+const store = createStore(
+  rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+);
 
 const App = () => {
-  const [showings, setShowings] = useState([
-    {
-      id: 1,
-      date: '2019-08-21',
-      time: '18:00',
-      guest: 'John Doe',
-    },
-  ]);
-
-  const createNewBooking = (booking) =>
-    setShowings([...showings, { id: showings.length + 1, ...booking }]);
-
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '100%',
-        justifyItems: 'center',
-      }}
-    >
-      <div style={{ fontSize: '1.4rem', gridColumn: '1', gridRow: '1', margin: '1rem' }}>
-        Property Showing Manager
-      </div>
-      <BookingForm createNewBooking={createNewBooking} style={{ gridColumn: '1', gridRow: '2' }} />
-      <ShowingList showings={showings} style={{ gridColumn: '1', gridRow: '3' }} />
-    </div>
+    <AppGrid>
+      <Title style={{ gridColumn: '1', gridRow: '1' }} />
+      <BookingForm style={{ gridColumn: '1', gridRow: '2' }} />
+      <ShowingList style={{ gridColumn: '1', gridRow: '3' }} />
+    </AppGrid>
   );
 };
 
-ReactDOM.render(<App />, document.querySelector('#root'));
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.querySelector('#root'),
+);

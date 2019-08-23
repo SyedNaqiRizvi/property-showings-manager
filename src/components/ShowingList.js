@@ -1,5 +1,6 @@
 import React from 'react';
 import Showing from './Showing';
+import { connect } from 'react-redux';
 
 const ShowingList = (props) => (
   <>
@@ -9,4 +10,8 @@ const ShowingList = (props) => (
   </>
 );
 
-export default ShowingList;
+const mapStateToProps = (state) => ({
+  showings: state.showings,
+});
+
+export default connect(mapStateToProps)(ShowingList);

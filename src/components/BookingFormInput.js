@@ -4,13 +4,11 @@ import TextField from '@material-ui/core/TextField';
 const BookingFormInput = (props) => (
   <div>
     <TextField
-      id={props.id}
-      label={props.label}
-      value={props.value}
-      onChange={props.onChange}
-      placeholder={props.placeholder}
-      type="text"
+      {...props}
       style={{ margin: '1rem' }}
+      InputLabelProps={{
+        shrink: true,
+      }}
     />
   </div>
 );
