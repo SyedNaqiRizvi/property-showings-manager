@@ -1,17 +1,10 @@
-import { ADD_SHOWING } from '../actions/action-types';
+import { UPDATE_SHOWINGS, POPULATE_SHOWINGS } from '../actions/action-types';
 
 const showings = (state = [], action) => {
   switch (action.type) {
-    case ADD_SHOWING:
-      return [
-        ...state,
-        {
-          id: action.id,
-          date: action.payload.date,
-          time: action.payload.time,
-          guest: action.payload.guest,
-        },
-      ];
+    case UPDATE_SHOWINGS:
+    case POPULATE_SHOWINGS:
+      return action.showings;
     default:
       return state;
   }

@@ -2,30 +2,65 @@ import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import BookingFormInput from './BookingFormInput';
 import { connect } from 'react-redux';
-import { addShowing } from '../actions';
+import { SAVE_SHOWING } from '../actions/action-types';
 
-const BookingForm = ({ dispatch }) => {
+const useBookingFormState = (saveShowing) => {
   const getFormattedDate = (date) =>
-    `${date.getFullYear()}-${getPaddedNumber(date.getMonth())}-${getPaddedNumber(date.getDay())}`;
+    `${date.getFullYear()}-${getPaddedNumber(date.getMonth())}-${getPaddedNumber(date.getDate())}`;
   const getFormattedTime = (date) =>
     `${getPaddedNumber(date.getHours())}:${getPaddedNumber(date.getMinutes())}`;
   const getPaddedNumber = (num) => num.toString().padStart(2, '0');
 
   const resetState = () => {
-    setDate(getFormattedDate(new Date()));
-    setTime(getFormattedTime(new Date()));
+    const now = new Date();
+    const oneHourFromNow = new Date();
+    oneHourFromNow.setHours(now.getHours() + 1);
+    setDate(getFormattedDate(now));
+    setStartTime(getFormattedTime(now));
+    setEndTime(getFormattedTime(oneHourFromNow));
     setGuest('');
   };
   const handleInputOnChange = (setFn) => (event) => setFn(event.target.value);
   const handleOnSubmit = (event) => {
     event.preventDefault();
-    dispatch(addShowing({ date, time, guest }));
+    saveShowing({ date, startTime, endTime, guest, status: 'pending' });
     resetState();
   };
 
-  const [date, setDate] = useState(getFormattedDate(new Date()));
-  const [time, setTime] = useState(getFormattedTime(new Date()));
+  const now = new Date();
+  const oneHourFromNow = new Date();
+  oneHourFromNow.setHours(now.getHours() + 1);
+  const [date, setDate] = useState(getFormattedDate(now));
+  const [startTime, setStartTime] = useState(getFormattedTime(now));
+  const [endTime, setEndTime] = useState(getFormattedTime(oneHourFromNow));
   const [guest, setGuest] = useState('');
+  return {
+    handleInputOnChange,
+    handleOnSubmit,
+    date,
+    setDate,
+    startTime,
+    setStartTime,
+    endTime,
+    setEndTime,
+    guest,
+    setGuest,
+  };
+};
+
+const BookingForm = ({ saveShowing }) => {
+  const {
+    handleInputOnChange,
+    handleOnSubmit,
+    date,
+    setDate,
+    startTime,
+    setStartTime,
+    endTime,
+    setEndTime,
+    guest,
+    setGuest,
+  } = useBookingFormState(saveShowing);
 
   return (
     <form onSubmit={handleOnSubmit}>
@@ -39,11 +74,18 @@ const BookingForm = ({ dispatch }) => {
           required
         />
         <BookingFormInput
-          id="time"
-          label="Time"
-          value={time}
-          onChange={handleInputOnChange(setTime)}
-          placeholder="Time"
+          id="start-time"
+          label="From"
+          value={startTime}
+          onChange={handleInputOnChange(setStartTime)}
+          type="time"
+          required
+        />
+        <BookingFormInput
+          id="end-time"
+          label="To"
+          value={endTime}
+          onChange={handleInputOnChange(setEndTime)}
           type="time"
           required
         />
@@ -66,4 +108,11 @@ const BookingForm = ({ dispatch }) => {
   );
 };
 
-export default connect()(BookingForm);
+const mapDispatchToProps = (dispatch) => ({
+  saveShowing: (showing) => dispatch({ type: SAVE_SHOWING, showing }),
+});
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(BookingForm);

@@ -1,27 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ShowingList from './components/ShowingList';
-import BookingForm from './components/BookingForm';
-import Title from './components/Title';
-import AppGrid from './components/AppGrid';
-import { createStore } from 'redux';
+import App from './components/App';
+import { createStore, applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import { Provider } from 'react-redux';
 import rootReducer from './reducers';
+import rootSaga from './sagas';
+import createSagaMiddleware from 'redux-saga';
 
-const store = createStore(
-  rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-);
+const sagaMiddleware = createSagaMiddleware();
 
-const App = () => {
-  return (
-    <AppGrid>
-      <Title style={{ gridColumn: '1', gridRow: '1' }} />
-      <BookingForm style={{ gridColumn: '1', gridRow: '2' }} />
-      <ShowingList style={{ gridColumn: '1', gridRow: '3' }} />
-    </AppGrid>
-  );
-};
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(sagaMiddleware)));
+
+sagaMiddleware.run(rootSaga);
 
 ReactDOM.render(
   <Provider store={store}>

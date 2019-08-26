@@ -38,6 +38,11 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
+  devServer: {
+    contentBase: path.resolve(__dirname, 'dist'),
+    compress: true,
+    port: 8082,
+  },
   plugins: [
     new HtmlWebPackPlugin({
       template: './src/index.html',
